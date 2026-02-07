@@ -1,13 +1,25 @@
 # 🛡️ ClaimShield: Multimodal Forensic Fraud AI
 
-ClaimShield is a high-performance, AI-driven forensic platform designed to detect insurance fraud using multimodal reasoning. It analyzes visual evidence (accident scenes, vehicle damage), financial documents (repair invoices), and cognitive patterns (linguistic deception) to provide a comprehensive fraud risk assessment.
+<div align="center">
+  <img src="https://img.shields.io/badge/Status-Live-brightgreen?style=for-the-badge&logo=vercel" alt="Live Status">
+  <img src="https://img.shields.io/badge/Backend-Hugging_Face-FFD21E?style=for-the-badge&logo=huggingface" alt="Backend">
+  <img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="License">
+</div>
+
+---
+
+## 🌍 Live Links
+
+- **🚀 Live Dashboard**: [https://claim-shield.vercel.app/](https://claim-shield.vercel.app/)
+- **⚙️ Backend API (HF)**: [https://huggingface.co/spaces/kshitij230/claimshield-api](https://huggingface.co/spaces/kshitij230/claimshield-api)
+- **📚 API Documentation**: [https://kshitij230-claimshield-api.hf.space/docs](https://kshitij230-claimshield-api.hf.space/docs)
 
 ---
 
 ## 🚀 Key Features
 
 ### 1. 👁️ Vision AI (Visual Verification)
-- **Damage Detection**: Uses YOLO (You Only Look Once) to automatically identify damaged parts and estimate severity.
+- **Damage Detection**: Uses YOLOv8 to automatically identify damaged parts and estimate severity.
 - **Collision Geometry**: Analyzes impact direction and force to verify if the damage is consistent with the reported accident story.
 
 ### 2. 🧾 Document Intelligence (OCR & Audit)
@@ -30,15 +42,14 @@ ClaimShield is built on a decoupled, multimodal architecture:
 - **AI Models**:
   - `Ultralytics YOLO`: Real-time object/damage detection.
   - `python-doctr`: High-accuracy OCR for document parsing.
-  - `Sentence-Transformers/FAISS`: Semantic similarity for pattern matching against historical fraudulent cases.
+  - `Sentence-Transformers/FAISS`: Semantic similarity for pattern matching.
   - `Scikit-Learn`: Random Forest classifier for final Fraud Scoring.
-- **Deployment**: Dockerized for Hugging Face Spaces.
+- **Brain**: Llama-3 (powered by Groq) for forensic report generation.
 
 ### **Frontend (The Command Center)**
 - **Framework**: Next.js 15 (React)
 - **Styling**: Vanilla CSS with Advanced Glassmorphism & Keyframe Animations.
-- **Features**: Interactive tabbed navigation, real-time Markdown report rendering (`react-markdown`), and dynamic fraud risk visualizations.
-- **Deployment**: Vercel.
+- **Features**: Interactive tabbed navigation, real-time Markdown report rendering.
 
 ---
 
@@ -60,7 +71,7 @@ ClaimShield is built on a decoupled, multimodal architecture:
 ### **Prerequisites**
 - Node.js 18+
 - Python 3.10+
-- Groq API Key (for automated report generation)
+- Groq API Key
 
 ### **Execution**
 Simply run the included batch file to set up environments and launch both services:
@@ -70,19 +81,11 @@ Simply run the included batch file to set up environments and launch both servic
 
 ---
 
-## ☁️ Deployment Guide
+## ☁️ Deployment Reference
 
-### **1. Backend (Hugging Face Spaces)**
-1. Create a new **Docker Space**.
-2. Upload the contents of the `backend/` directory.
-3. Set the Secret Variable: `GROQ_API_KEY`.
-4. The API will be available at `https://your-space-name.hf.space`.
-
-### **2. Frontend (Vercel)**
-1. Connect the root directory of this repository to Vercel.
-2. Set the Environment Variable:
-   - `NEXT_PUBLIC_API_BASE_URL`: (Your Hugging Face Space URL).
-3. Vercel will auto-detect the Next.js project and deploy.
+- **Backend**: Deployed on Hugging Face Spaces (Docker).
+- **Frontend**: Deployed on Vercel (Next.js).
+- **Critical Env Var**: `NEXT_PUBLIC_API_BASE_URL` (points to the HF Space URL).
 
 ---
 
@@ -97,18 +100,10 @@ ClaimShield/
 │   ├── Dockerfile      # For Hugging Face Deployment
 │   └── requirements.txt
 ├── public/             # Static UI assets
+├── LICENSE             # MIT License
 ├── run_all.bat         # Local automation script
-├── .gitignore          # Cloud-safe ignore list
-└── README.md           # You are here
+└── README.md           # Project Documentation
 ```
-
----
-
-## ⚖️ Forensic Modules Overview
-
-- **Fraud Score**: A weighted probability (0.0 to 1.0) calculated from visual mismatches, financial anomalies, and linguistic flags.
-- **Physical Consistency**: Validates if the "Frontal Impact" claimed by the user matches the "Rear Bumper" damage detected by AI.
-- **Invoice Consistency**: Flags parts listed on the invoice that do not appear to be damaged in the photos.
 
 ---
 *Developed by Kshitij Sharma for Advanced Forensic Insurance Analysis.*
