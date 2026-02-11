@@ -7,7 +7,7 @@
 </div>
 
 ---
-
+Built a multimodal fraud detection system that analyzes vehicle damage images, repair invoices, and claim narratives to detect inconsistencies. Used YOLOv8 for damage detection and OCR for structured invoice extraction, combined with forensic scoring to flag suspicious claims. Integrated LLM-based investigation report generation and linguistic deception analysis, along with vector similarity search against historical fraud cases. Deployed as a scalable, containerized real-time inference pipeline with a modular architecture extensible to other insurance claim types.
 ## 🌍 Live Links
 
 - **🚀 Live Dashboard**: [https://claim-shield.vercel.app/](https://claim-shield.vercel.app/)
