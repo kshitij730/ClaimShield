@@ -1,16 +1,22 @@
 from fastapi import FastAPI, UploadFile, File, Form
+from fastapi.responses import PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import joblib
 import os
-import json
+import time
+from pathlib import Path
+from uuid import uuid4
 from .vision import VisionAnalyzer
 from .ocr import InvoiceProcessor
 from .reasoning import ReasoningEngine
 from .retrieval import ClaimRetriever
 from .report import ReportGenerator
 
-app = FastAPI(title="ClaimShield API")
+app = FastAPI(title="ClaimShield API", version="2.0.0")
+START_TIME = time.time()
+REQUEST_COUNTER = 0
+TEMP_DIR = Path("temp")
 
 # Setup CORS
 app.add_middleware(
@@ -27,6 +33,112 @@ reasoning = ReasoningEngine()
 retriever = ClaimRetriever()
 reporter = ReportGenerator()
 
+DEVSECOPS_CONTROLS = [
+    {
+        "category": "Source Code Management",
+        "tools": ["GitHub", "GitLab", "Bitbucket"],
+        "mode": "ready",
+        "control": "Protected branches, pull-request review, signed releases, and issue traceability.",
+    },
+    {
+        "category": "Infrastructure as Code",
+        "tools": ["Terraform", "AWS CloudFormation"],
+        "mode": "planned",
+        "control": "Validation-only blueprints. Paid cloud apply is disabled by default.",
+    },
+    {
+        "category": "Configuration Management",
+        "tools": ["Ansible", "Puppet", "Chef"],
+        "mode": "ready",
+        "control": "Local hardening playbooks and scanner bootstrap workflow.",
+    },
+    {
+        "category": "CI/CD",
+        "tools": ["Jenkins", "GitHub Actions", "GitLab CI", "CircleCI"],
+        "mode": "integrated",
+        "control": "Build, lint, SAST, dependency scan, container scan, and policy gates.",
+    },
+    {
+        "category": "Containerization & Orchestration",
+        "tools": ["Docker", "Kubernetes", "Helm", "Argo CD"],
+        "mode": "ready",
+        "control": "Container-first API and GitOps-ready deployment structure.",
+    },
+    {
+        "category": "Security Testing",
+        "tools": ["SonarQube", "Checkmarx", "OWASP ZAP", "Burp Suite"],
+        "mode": "ready",
+        "control": "SAST and DAST workflows prepared for local and CI execution.",
+    },
+    {
+        "category": "Vulnerability Scanning",
+        "tools": ["OWASP Dependency-Check", "Trivy", "Snyk", "Clair"],
+        "mode": "integrated",
+        "control": "Filesystem, dependency, and image risk scanning with severity gates.",
+    },
+    {
+        "category": "Secrets, Policy, and Compliance",
+        "tools": ["HashiCorp Vault", "AWS Secrets Manager", "OPA", "HashiCorp Sentinel"],
+        "mode": "ready",
+        "control": "Local secrets contract with policy-as-code guardrails.",
+    },
+    {
+        "category": "Monitoring & Logging",
+        "tools": ["Prometheus", "Grafana", "ELK Stack"],
+        "mode": "ready",
+        "control": "Metrics endpoint, dashboard datasource, and investigation log pipeline.",
+    },
+    {
+        "category": "Cloud Security",
+        "tools": ["AWS Config", "Azure Security Center", "Google Cloud SCC"],
+        "mode": "planned",
+        "control": "Mapped as future adapters only; no paid cloud resources are activated.",
+    },
+]
+
+
+def _safe_temp_path(upload: UploadFile) -> Path:
+    suffix = Path(upload.filename or "").suffix[:12]
+    return TEMP_DIR / f"{uuid4().hex}{suffix}"
+
+
+@app.get("/health")
+async def health():
+    return {
+        "service": "claimshield-api",
+        "status": "ok",
+        "version": app.version,
+        "fraud_model_loaded": fraud_model is not None,
+        "cloud_spend_enabled": False,
+    }
+
+
+@app.get("/devsecops")
+async def devsecops():
+    return {
+        "cloud_spend_enabled": False,
+        "controls": DEVSECOPS_CONTROLS,
+    }
+
+
+@app.get("/metrics", response_class=PlainTextResponse)
+async def metrics():
+    uptime = int(time.time() - START_TIME)
+    return "\n".join(
+        [
+            "# HELP claimshield_api_uptime_seconds API process uptime.",
+            "# TYPE claimshield_api_uptime_seconds gauge",
+            f"claimshield_api_uptime_seconds {uptime}",
+            "# HELP claimshield_claims_analyzed_total Claims analyzed by this process.",
+            "# TYPE claimshield_claims_analyzed_total counter",
+            f"claimshield_claims_analyzed_total {REQUEST_COUNTER}",
+            "# HELP claimshield_model_loaded Fraud model load status.",
+            "# TYPE claimshield_model_loaded gauge",
+            f"claimshield_model_loaded {1 if fraud_model else 0}",
+            "",
+        ]
+    )
+
 # Load ML Model
 MODEL_PATH = os.path.join(os.path.dirname(__file__), '..', 'models', 'fraud_model.joblib')
 try:
@@ -42,11 +154,14 @@ async def analyze_claim(
     invoice_doc: UploadFile = File(...),
     description: str = Form(None)
 ):
+    global REQUEST_COUNTER
+    REQUEST_COUNTER += 1
+
     # 1. Save files temporarily (In production use cloud storage)
-    os.makedirs("temp", exist_ok=True)
-    scene_path = f"temp/{scene_image.filename}"
-    damage_path = f"temp/{damage_image.filename}"
-    invoice_path = f"temp/{invoice_doc.filename}"
+    TEMP_DIR.mkdir(exist_ok=True)
+    scene_path = _safe_temp_path(scene_image)
+    damage_path = _safe_temp_path(damage_image)
+    invoice_path = _safe_temp_path(invoice_doc)
     
     with open(scene_path, "wb") as f: f.write(await scene_image.read())
     with open(damage_path, "wb") as f: f.write(await damage_image.read())

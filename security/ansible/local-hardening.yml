@@ -1,0 +1,30 @@
+- name: ClaimShield local security workstation hardening
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    required_env_files:
+      - .env.local
+      - backend/.env
+  tasks:
+    - name: Verify required environment files are intentionally local-only
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      loop: "{{ required_env_files }}"
+      register: env_files
+
+    - name: Print missing environment file guidance
+      ansible.builtin.debug:
+        msg: "{{ item.item }} is missing. Keep secrets local and never commit real keys."
+      loop: "{{ env_files.results }}"
+      when: not item.stat.exists
+
+    - name: Confirm Docker security compose file exists
+      ansible.builtin.stat:
+        path: docker-compose.security.yml
+      register: security_compose
+
+    - name: Fail when local security stack is missing
+      ansible.builtin.fail:
+        msg: docker-compose.security.yml is required for local scanner and observability workflows.
+      when: not security_compose.stat.exists

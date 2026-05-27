@@ -1,0 +1,14 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: ClaimShield cloud security reference only. No paid resources are created by default.
+
+Parameters:
+  EnablePaidCloudResources:
+    Type: String
+    Default: "false"
+    AllowedValues: ["false"]
+    Description: Kept false to avoid creating paid AWS resources.
+
+Outputs:
+  LocalFirstSecurityStack:
+    Description: Cloud controls mapped for future use without activating AWS billing.
+    Value: AWS Config, Security Hub, GuardDuty, CloudWatch, and Secrets Manager adapters are deferred.
