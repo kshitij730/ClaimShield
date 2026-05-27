@@ -4,10 +4,17 @@
 ![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688?style=for-the-badge&logo=fastapi)
 ![DevSecOps](https://img.shields.io/badge/DevSecOps-Local_First-2ea44f?style=for-the-badge)
 ![AI](https://img.shields.io/badge/AI-Multimodal_Forensics-6f42c1?style=for-the-badge)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-000000?style=for-the-badge&logo=vercel)](https://claim-shield-kshitij730s-projects.vercel.app/)
 
 ClaimShield is a multimodal forensic fraud investigation platform for insurance claims. It turns accident-scene images, vehicle damage photos, repair invoices, claim narratives, metadata, historical patterns, and security controls into a single investigation command center.
 
 The project is designed to look and behave like a serious AI + DevSecOps product while staying local-first. Cloud security adapters are mapped for future expansion, but paid cloud resource creation is intentionally disabled.
+
+## 🔗 Live Application
+
+**[https://claim-shield-kshitij730s-projects.vercel.app/](https://claim-shield-kshitij730s-projects.vercel.app/)**
+
+The application is deployed on Vercel and accessible without any local setup. If the FastAPI backend is not running, the UI automatically falls back to a realistic demo investigation so reviewers can still experience the full product flow.
 
 ## Highlights
 
@@ -101,6 +108,8 @@ Open:
 http://localhost:3000
 ```
 
+> **Tip:** To try ClaimShield instantly without any local setup, visit the live deployment at [https://claim-shield-kshitij730s-projects.vercel.app/](https://claim-shield-kshitij730s-projects.vercel.app/)
+
 ### 2. Backend
 
 ```bash
@@ -144,7 +153,8 @@ Useful local URLs:
 
 | Service | URL |
 | --- | --- |
-| Frontend | `http://localhost:3000` |
+| **Live Demo (Vercel)** | **[https://claim-shield-kshitij730s-projects.vercel.app/](https://claim-shield-kshitij730s-projects.vercel.app/)** |
+| Frontend (local) | `http://localhost:3000` |
 | Backend API | `http://localhost:8000` |
 | API Docs | `http://localhost:8000/docs` |
 | Prometheus | `http://localhost:9090` |
